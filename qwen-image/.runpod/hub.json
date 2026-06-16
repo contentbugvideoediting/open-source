@@ -1,0 +1,13 @@
+{
+  "title": "cb-qwenimage",
+  "description": "ContentBug styled-image engine — Qwen-Image (Apache-2.0, commercial-safe). Premium styled hero frames + best-in-class text rendering, 8-step Lightning for cheap inference. Feeds the image and image->video pipelines. The sellable alternative to FLUX.1-dev (which is non-commercial).",
+  "type": "serverless",
+  "category": "image",
+  "config": {
+    "runpod": "GPU",
+    "containerDiskInGb": 40
+  },
+  "presets": [
+    { "name": "default", "scale": "ADA_24" }
+  ]
+}
