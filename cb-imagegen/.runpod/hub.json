@@ -1,0 +1,13 @@
+{
+  "title": "cb-imagegen",
+  "description": "Content Bug styled-image engine — FLUX.1-dev + face-lock (PuLID). Generates premium styled hero frames (cinematic/3D/cartoon/lifestyle/etc.) from a prompt, optionally with a client's locked face. Feeds the image→video b-roll pipeline.",
+  "type": "serverless",
+  "category": "image",
+  "config": {
+    "runpod": "GPU",
+    "containerDiskInGb": 30
+  },
+  "presets": [
+    { "name": "default", "scale": "ADA_24" }
+  ]
+}

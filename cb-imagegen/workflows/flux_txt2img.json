@@ -1,0 +1,12 @@
+{
+  "_doc": "FLUX.1-dev txt2img workflow (ComfyUI API format) for cb-imagegen. content-studio sends this as {\"input\":{\"workflow\": <this>}} with {prompt}/{width}/{height}/{seed} substituted. The face-lock variant (flux_pulid.json) adds a PuLID Apply node fed by the client's face image. NOTE: model filenames below must match the files in the base image's /comfyui/models — verify on first deploy and adjust if ComfyUI reports 'model not found'.",
+  "6":  { "class_type": "CLIPTextEncode", "inputs": { "text": "{prompt}", "clip": ["11", 0] } },
+  "7":  { "class_type": "CLIPTextEncode", "inputs": { "text": "blurry, low quality, watermark, text, deformed", "clip": ["11", 0] } },
+  "5":  { "class_type": "EmptyLatentImage", "inputs": { "width": "{width}", "height": "{height}", "batch_size": 1 } },
+  "10": { "class_type": "UNETLoader", "inputs": { "unet_name": "flux1-dev-fp8.safetensors", "weight_dtype": "fp8_e4m3fn" } },
+  "11": { "class_type": "DualCLIPLoader", "inputs": { "clip_name1": "t5xxl_fp8_e4m3fn.safetensors", "clip_name2": "clip_l.safetensors", "type": "flux" } },
+  "12": { "class_type": "VAELoader", "inputs": { "vae_name": "ae.safetensors" } },
+  "13": { "class_type": "KSampler", "inputs": { "seed": "{seed}", "steps": 25, "cfg": 1, "sampler_name": "euler", "scheduler": "simple", "denoise": 1, "model": ["10", 0], "positive": ["6", 0], "negative": ["7", 0], "latent_image": ["5", 0] } },
+  "8":  { "class_type": "VAEDecode", "inputs": { "samples": ["13", 0], "vae": ["12", 0] } },
+  "9":  { "class_type": "SaveImage", "inputs": { "filename_prefix": "cbimg", "images": ["8", 0] } }
+}

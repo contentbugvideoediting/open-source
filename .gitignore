@@ -1,0 +1,33 @@
+# ── SECRETS — never, ever commit ──────────────────────────────
+.cb-env
+*.env
+.env*
+*token*
+*secret*
+*credential*
+*.pem
+*.key
+
+# ── STUDIO CODE — this repo is OPEN-SOURCE ENGINES ONLY ────────
+# (belt-and-suspenders: studio lives in its own private repo and is never copied here)
+server/
+blueprint-builder/
+public/
+**/ghl*
+**/supabase*
+
+# ── MODEL WEIGHTS — pull at RunPod build, never store in git ───
+*.safetensors
+*.ckpt
+*.gguf
+*.pt
+*.pth
+*.bin
+*.onnx
+
+# ── junk ──────────────────────────────────────────────────────
+node_modules/
+__pycache__/
+*.pyc
+.DS_Store
+*.log
