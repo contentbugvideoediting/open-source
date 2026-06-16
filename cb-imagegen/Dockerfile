@@ -14,6 +14,17 @@ RUN cd /comfyui/custom_nodes && \
     git clone --depth 1 https://github.com/cubiq/ComfyUI_InstantID.git || true && \
     git clone --depth 1 https://github.com/cubiq/ComfyUI_IPAdapter_plus.git || true
 
+# FLUX text encoders — the base ships the UNET + VAE but NOT the CLIP/T5 text encoders the
+# DualCLIPLoader needs (first test failed: "clip_name not in []" = empty encoder dir). Download
+# them into BOTH dirs ComfyUI may read so the loader always finds them. (Apache-licensed mirror.)
+RUN mkdir -p /comfyui/models/clip /comfyui/models/text_encoders && \
+    for d in clip text_encoders; do \
+      wget -q -O /comfyui/models/$d/t5xxl_fp8_e4m3fn.safetensors \
+        https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/t5xxl_fp8_e4m3fn.safetensors && \
+      wget -q -O /comfyui/models/$d/clip_l.safetensors \
+        https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/clip_l.safetensors ; \
+    done
+
 # python deps for InsightFace identity embedding (the same family as the faceswap worker)
 RUN pip install --no-cache-dir insightface==0.7.3 onnxruntime-gpu facexlib || true
 
