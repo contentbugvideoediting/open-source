@@ -9,13 +9,20 @@
 # We add the face-lock custom nodes (PuLID-Flux + InsightFace + IP-Adapter) to lock a client's face.
 FROM runpod/worker-comfyui:5.8.5-base
 
-# face-lock custom node — sipie800's PuLID-Flux-Enhanced. Install ITS requirements.txt so the node
-# actually loads (first attempt failed: 'PulidFluxModelLoader not found' = node deps not installed).
-RUN cd /comfyui/custom_nodes && \
-    git clone --depth 1 https://github.com/sipie800/ComfyUI-PuLID-Flux-Enhanced.git && \
-    pip install --no-cache-dir -r ComfyUI-PuLID-Flux-Enhanced/requirements.txt
+# build tools — so any dep that compiles (insightface) can't silently fail the build.
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential cmake git && rm -rf /var/lib/apt/lists/*
 
-RUN pip install --no-cache-dir insightface==0.7.3 onnxruntime-gpu facexlib timm
+# face-lock custom node — sipie800's PuLID-Flux-Enhanced.
+RUN cd /comfyui/custom_nodes && \
+    git clone --depth 1 https://github.com/sipie800/ComfyUI-PuLID-Flux-Enhanced.git
+
+# node deps — install onnxruntime-GPU only (the node's requirements.txt lists BOTH onnxruntime +
+# onnxruntime-gpu, which collide). No '|| true' — if a dep fails, the build FAILS loudly.
+RUN pip install --no-cache-dir facexlib insightface ftfy timm onnxruntime-gpu
+
+# BUILD-TIME SMOKE TEST — verify the node's deps actually import. If broken, the build fails HERE
+# (loud) instead of silently shipping an image where the node won't register.
+RUN python -c "import facexlib, insightface, onnxruntime, ftfy, timm; print('PuLID deps import OK')"
 
 # ALL-IN-ONE FLUX.1-dev fp8 checkpoint (unet+clip+t5+vae) → models/checkpoints. Verified URL (200 OK).
 RUN mkdir -p /comfyui/models/checkpoints && \
