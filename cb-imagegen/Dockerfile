@@ -7,11 +7,13 @@
 # We add the face-lock custom nodes (PuLID-Flux + InsightFace + IP-Adapter) to lock a client's face.
 FROM runpod/worker-comfyui:5.8.5-base
 
-# face-lock custom node — sipie800's PuLID-Flux-Enhanced (verified repo; supports multi-image identity).
+# face-lock custom node — sipie800's PuLID-Flux-Enhanced. Install ITS requirements.txt so the node
+# actually loads (first attempt failed: 'PulidFluxModelLoader not found' = node deps not installed).
 RUN cd /comfyui/custom_nodes && \
-    git clone --depth 1 https://github.com/sipie800/ComfyUI-PuLID-Flux-Enhanced.git || true
+    git clone --depth 1 https://github.com/sipie800/ComfyUI-PuLID-Flux-Enhanced.git && \
+    pip install --no-cache-dir -r ComfyUI-PuLID-Flux-Enhanced/requirements.txt
 
-RUN pip install --no-cache-dir insightface==0.7.3 onnxruntime-gpu facexlib timm || true
+RUN pip install --no-cache-dir insightface==0.7.3 onnxruntime-gpu facexlib timm
 
 # ALL-IN-ONE FLUX.1-dev fp8 checkpoint (unet+clip+t5+vae) → models/checkpoints. Verified URL (200 OK).
 RUN mkdir -p /comfyui/models/checkpoints && \
